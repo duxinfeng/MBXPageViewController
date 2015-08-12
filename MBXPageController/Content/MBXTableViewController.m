@@ -9,20 +9,21 @@
 #import "MBXTableViewController.h"
 
 @interface MBXTableViewController () <UITableViewDelegate, UITableViewDataSource>
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic)  UITableView *tableView;
 @end
 
 @implementation MBXTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
+    self.tableView = [[UITableView alloc]initWithFrame:CGRectMake(0,0, self.view.bounds.size.width, self.view.bounds.size.height ) style:UITableViewStylePlain];
+    self.tableView.backgroundColor = self.view.backgroundColor;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-
-    // No extra Cells
-    self.tableView.tableFooterView  = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:self.tableView];
 }
+
 
 #pragma mark - UITableView Datasource
 
@@ -33,25 +34,20 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        return [tableView dequeueReusableCellWithIdentifier:@"text_cell" forIndexPath:indexPath];
+ 
+    
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
-    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"image_cell" forIndexPath:indexPath];
-    
-    UIImageView *image = (UIImageView *)[cell viewWithTag:1];
-    
-    NSString* imageName = [NSString stringWithFormat:@"photo_%li", (long)indexPath.row];
-    image.image = [UIImage imageNamed:imageName];
-    
+    cell.textLabel.text = [NSString stringWithFormat:@"%zd XXXXXXXXX",indexPath.row];
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        return 56;
-    }
+   
     return 98;
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MBXSegmentControllerExampleViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,13 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    MBXSegmentControllerExampleViewController *exampleViewController = [[MBXSegmentControllerExampleViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:exampleViewController];
+    self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
+
     return YES;
 }
 

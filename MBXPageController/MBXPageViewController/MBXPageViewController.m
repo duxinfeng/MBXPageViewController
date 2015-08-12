@@ -25,6 +25,21 @@
 @implementation MBXPageViewController
 
 #pragma mark - Init
+- (id)init{
+    
+    self = [[MBXPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
+                                            navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
+                                                          options:nil];
+    
+    if (self) {
+        
+        _viewControllerArray = [[NSMutableArray alloc] init];
+        _currentPageIndex = 0;
+        
+        _pageMode = MBX_FreeButtons;
+    }
+    return self;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     

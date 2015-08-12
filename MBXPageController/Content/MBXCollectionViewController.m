@@ -7,21 +7,47 @@
 //
 
 #import "MBXCollectionViewController.h"
+static NSString *const identifier = @"collection";
+
+static CGFloat kLeftX = 10;
+static CGFloat kLeftY = 10;
+
+static CGFloat kAvatarWH = 100;
+static CGFloat kPadding = 10;
+static CGFloat kNameLabelH = 30;
 
 @interface MBXCollectionViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (strong, nonatomic) UICollectionView *collectionView;
 @end
 
 @implementation MBXCollectionViewController
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        kAvatarWH = (self.view.bounds.size.width-kPadding*2-2*kLeftX)/3;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self.collectionView setDelegate:self];
-    [self.collectionView setDataSource:self];
+    UICollectionViewFlowLayout *flowLayout= [[UICollectionViewFlowLayout alloc]init];
+    flowLayout.itemSize = CGSizeMake(kAvatarWH, kAvatarWH);
+    flowLayout.sectionInset = UIEdgeInsetsMake(kLeftY, kLeftX, kPadding, kPadding);
+    flowLayout.minimumLineSpacing = 0;//最小行间距
+    flowLayout.minimumInteritemSpacing = 0;//最小列间距
     
-    [self.collectionView reloadData];
+    
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.bounds.size.height) collectionViewLayout:flowLayout];
+    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:identifier];
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
+    self.collectionView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.collectionView];
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -31,19 +57,22 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"image_cell" forIndexPath:indexPath];
-    
-    UIImageView *image = (UIImageView *)[cell viewWithTag:1];
-    NSInteger count = indexPath.row + 1;
-    NSString* imageName = [NSString stringWithFormat:@"photo_%li", (long)count];
-    image.image = [UIImage imageNamed:imageName];
+
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.frame = CGRectMake(0, 0, kAvatarWH, kAvatarWH);
+
+    imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"photo_%li", indexPath.row+1]];
+    [cell addSubview:imageView];
+
     
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(115, 115);
+    return CGSizeMake(kAvatarWH, kAvatarWH);
 }
 
 @end
