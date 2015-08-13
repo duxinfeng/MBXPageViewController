@@ -1,14 +1,21 @@
 #MBXPageViewController
 
+---
+fork https://github.com/Moblox/MBXPageViewController,因为demo用的xib，这里是去掉xib文件修改代码的一个Demo。
+
+---
+
 A library that allows to have a UIPageController with control buttons (One per VC / Left-Right Buttons) or an UISegmentController. This is not a difficult task, but the intention of this library is to make it extremely easy, clean and fast. We resemble the use of a UITableView in a UIViewController.
 
-## How it looks
+
+<!--## How it looks
 ### Free Buttons
-![Free Buttons Gif](AnimatedGif/FreeButtons.gif)
+![Free Buttons Gif](AnimatedGif/FreeButtns.gif)
 ### Left/ Right Arrow Buttons
-![Arrow Buttons Gif](AnimatedGif/ArrowButtons.gif)
+![Arrow Buttons Gif](AnimatedGif/Arrowuttons.gif)-->
+
 ### SegmentController Buttons
-![Segment Gif](AnimatedGif/Segment.gif)
+![Segment Gif](AnimatedGif/SegmentControllerButtons.gif)
 
 ## Features
 ### Page Modes
@@ -16,9 +23,6 @@ A library that allows to have a UIPageController with control buttons (One per V
 - MBX_LeftRightButtons: Use two buttons to move left or right through the ViewControllers.
 - MBX_SegmentController: Use a SegmentController to move between the ViewControllers.
 
-### Other Features
-- Delegate: Everytime that a new ViewController Appear you can trigger other actions.
-- Storyboard / Xib / Programmatically Created Views: You can use any of those or even mix them.
 
 ## What can I include in the ViewControllers
 - UITableViewControllers
@@ -26,14 +30,6 @@ A library that allows to have a UIPageController with control buttons (One per V
 - UIViewControllers
 - Pretty much anything!
 
-## Installation
-
-### CocoaPod
-
-Available in [Cocoa Pods](http://cocoapods.org/?q=MBXPageViewController)
-```
-pod 'MBXPageViewController'
-```
 
 ### Adding the Files
 
@@ -50,8 +46,9 @@ You can find examples for the three different ways to use this (Free Buttons, Le
 #import "MBXPageViewController.h"
 
 @interface MBXSegmentControllerExampleViewController () <MBXPageControllerDataSource, MBXPageControllerDataDelegate>
-@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentController;
-@property (weak, nonatomic) IBOutlet UIView *containerView;
+@property (strong, nonatomic) UISegmentedControl *segmentController;
+@property (strong, nonatomic) UIView *containerView;
+@property (strong, nonatomic) MBXPageViewController* MBXPageController;
 
 @end
 
@@ -61,47 +58,47 @@ You can find examples for the three different ways to use this (Free Buttons, Le
     [super viewDidLoad];
     
     // Initiate MBXPageController
-    MBXPageViewController *MBXPageController = [MBXPageViewController new];
-    MBXPageController.MBXDataSource = self;
-    MBXPageController.MBXDataDelegate = self;
-    MBXPageController.pageMode = MBX_SegmentController;
-    [MBXPageController reloadPages];
+    self.MBXPageController = [[MBXPageViewController alloc] init];
+    self.MBXPageController.MBXDataSource = self;
+    self.MBXPageController.MBXDataDelegate = self;
+    self.MBXPageController.pageMode = MBX_SegmentController;
+    [self.MBXPageController reloadPages];
 }
+
 
 #pragma mark - MBXPageViewController Data Source
 
 - (NSArray *)MBXPageButtons
 {
-    return @[self.segmentController];
+    if (!_segmentController) {
+        _segmentController = [[UISegmentedControl alloc]initWithItems:@[@"Table",@"Collection",@"View"]];
+        _segmentController.frame = CGRectMake(10, 64+10, self.view.bounds.size.width-20, 40);
+        _segmentController.tintColor = [UIColor purpleColor];
+        _segmentController.selectedSegmentIndex = 0;
+        [self.view addSubview:_segmentController];
+    }
+    return @[_segmentController];
 }
 
 - (UIView *)MBXPageContainer
 {
-    return self.containerView;
+    if (!_containerView) {
+        _containerView = [[UIView alloc] init];
+        _containerView.backgroundColor = [UIColor whiteColor];
+        _containerView.frame = CGRectMake(0, 64+10+40+10, self.view.bounds.size.width, self.view.bounds.size.height-64+10+40+10);
+        [self.view addSubview:_containerView];
+    }
+    return _containerView;
 }
+
 
 - (NSArray *)MBXPageControllers
 {
-    // You can Load a VC directly from Storyboard
-    UIStoryboard* mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
-    UIViewController *demo  = [mainStoryboard instantiateViewControllerWithIdentifier:@"firstController"];
-    
-    // Or Load it from a xib file
-    UIViewController *demo2 = [UIViewController new];
-    demo2.view = [[[NSBundle mainBundle] loadNibNamed:@"View" owner:self options:nil] objectAtIndex:0];
-    
-    // Or create it programatically
-    UIViewController *demo3 = [[UIViewController alloc] init];
-    demo3.view.backgroundColor = [UIColor orangeColor];
-    
-    UILabel *fromLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 40, 300, 40)];
-    fromLabel.text = @"Third Controller";
-    
-    [demo3.view addSubview:fromLabel];
-    
-    // The order matters.
-    return @[demo,demo2,demo3];
+    MBXTableViewController *tabViewController = [[MBXTableViewController alloc] init];
+    MBXCollectionViewController *collectionViewController = [[MBXCollectionViewController alloc] init];;
+    UIViewController *viewController = [[UIViewController alloc] init];
+    viewController.view.backgroundColor = [UIColor orangeColor];
+    return @[tabViewController,collectionViewController, viewController];
 }
 
 
@@ -115,9 +112,6 @@ You can find examples for the three different ways to use this (Free Buttons, Le
 
 ```
 
-## Based in the Work of cwRichardKim
-
-Based in: https://github.com/cwRichardKim/RKSwipeBetweenViewControllers
 
 MBXPageViewController
 =====================
