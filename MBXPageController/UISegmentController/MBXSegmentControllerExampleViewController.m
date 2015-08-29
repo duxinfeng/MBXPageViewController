@@ -33,7 +33,32 @@
 
 
 #pragma mark - MBXPageViewController Data Source
+// 放导航栏上
+- (NSArray *)MBXPageButtons
+{
+    if (!_segmentController) {
+        _segmentController = [[UISegmentedControl alloc]initWithItems:@[@"Table",@"Collection",@"View"]];
+        _segmentController.frame = CGRectMake(20, 10, self.view.bounds.size.width-40, 30);
+        _segmentController.tintColor = [UIColor purpleColor];
+        _segmentController.selectedSegmentIndex = 0;
+        [self.navigationController.navigationBar addSubview:_segmentController];
+    }
+    return @[_segmentController];
+}
 
+- (UIView *)MBXPageContainer
+{
+    if (!_containerView) {
+        _containerView = [[UIView alloc] init];
+        _containerView.backgroundColor = [UIColor whiteColor];
+        _containerView.frame = CGRectMake(0, 64, self.view.bounds.size.width, self.view.bounds.size.height-64);
+        [self.view addSubview:_containerView];
+    }
+    return _containerView;
+}
+
+// 放ViewController上
+/*
 - (NSArray *)MBXPageButtons
 {
     if (!_segmentController) {
@@ -56,7 +81,7 @@
     }
     return _containerView;
 }
-
+*/
 
 - (NSArray *)MBXPageControllers
 {
